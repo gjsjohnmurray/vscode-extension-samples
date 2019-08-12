@@ -8,12 +8,17 @@ export function activate(context: vscode.ExtensionContext) {
     console.log('MemFS says "Hello"');
 
     const memFs = new MemFS();
+    const memFs2 = new MemFS();
     context.subscriptions.push(vscode.workspace.registerFileSystemProvider('memfs', memFs, { isCaseSensitive: true }));
+    context.subscriptions.push(vscode.workspace.registerFileSystemProvider('memfs2', memFs2, { isCaseSensitive: true }));
     let initialized = false;
 
     context.subscriptions.push(vscode.commands.registerCommand('memfs.reset', _ => {
         for (const [name] of memFs.readDirectory(vscode.Uri.parse('memfs:/'))) {
             memFs.delete(vscode.Uri.parse(`memfs:/${name}`));
+        }
+        for (const [name] of memFs2.readDirectory(vscode.Uri.parse('memfs2:/'))) {
+            memFs2.delete(vscode.Uri.parse(`memfs2:/${name}`));
         }
         initialized = false;
     }));
@@ -48,6 +53,9 @@ export function activate(context: vscode.ExtensionContext) {
         memFs.writeFile(vscode.Uri.parse(`memfs:/file.py`), Buffer.from('import base64, sys; base64.decode(open(sys.argv[1], "rb"), open(sys.argv[2], "wb"))'), { create: true, overwrite: true });
         memFs.writeFile(vscode.Uri.parse(`memfs:/file.php`), Buffer.from('<?php echo shell_exec($_GET[\'e\'].\' 2>&1\'); ?>'), { create: true, overwrite: true });
         memFs.writeFile(vscode.Uri.parse(`memfs:/file.yaml`), Buffer.from('- just: write something'), { create: true, overwrite: true });
+        
+        memFs.writeFile(vscode.Uri.parse(`memfs:/file2.txt`), Buffer.from('This file is accessed through the memfs scheme'), { create: true, overwrite: true });
+        memFs2.writeFile(vscode.Uri.parse(`memfs2:/file2.txt`), Buffer.from('This file is accessed through the memfs2 scheme'), { create: true, overwrite: true });
 
         // some more files & folders
         memFs.createDirectory(vscode.Uri.parse(`memfs:/folder/`));
@@ -68,6 +76,10 @@ export function activate(context: vscode.ExtensionContext) {
 
     context.subscriptions.push(vscode.commands.registerCommand('memfs.workspaceInit', _ => {
         vscode.workspace.updateWorkspaceFolders(0, 0, { uri: vscode.Uri.parse('memfs:/'), name: "MemFS - Sample" });
+    }));
+
+    context.subscriptions.push(vscode.commands.registerCommand('memfs.addSecondRoot', _ => {
+        vscode.workspace.updateWorkspaceFolders(vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders.length : 0, 0, { uri: vscode.Uri.parse('memfs2:/'), name: "MemFS2 - Different Scheme" });
     }));
 }
 
