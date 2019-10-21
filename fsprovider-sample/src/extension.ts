@@ -8,7 +8,7 @@ export function activate(context: vscode.ExtensionContext) {
     console.log('MemFS says "Hello"');
 
     const memFs = new MemFS();
-    context.subscriptions.push(vscode.workspace.registerFileSystemProvider('memfs', memFs, { isCaseSensitive: true }));
+    context.subscriptions.push(vscode.workspace.registerFileSystemProvider('memfs', memFs, { isCaseSensitive: true, isReadonly: true }));
     let initialized = false;
 
     context.subscriptions.push(vscode.commands.registerCommand('memfs.reset', _ => {
