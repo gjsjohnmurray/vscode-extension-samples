@@ -39,7 +39,13 @@
 					},
 					"conf.resource.insertEmptyLastLine": {
 						"type": "object",
-						"default": {},
+						"default": {
+							"one": "FirstDefault",
+							"two": {
+								"alpha": "abc",
+								"number": 123
+							}
+						},
 						"description": "Resource configuration: Configure files using glob patterns to have an empty last line always",
 						"scope": "resource"
 					},
