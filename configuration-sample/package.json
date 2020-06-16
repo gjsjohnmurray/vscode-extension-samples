@@ -48,6 +48,10 @@
 						"default": false,
 						"description": "Shows the size of the document",
 						"scope": "language-overridable"
+					},
+					"conf.test-vscode-71295": {
+						"type": "string",
+						"markdownDescription": "Click [here](command:workbench.view.extensions) to switch to Extensions view."
 					}
 				}
 			}
