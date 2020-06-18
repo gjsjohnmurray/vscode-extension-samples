@@ -51,7 +51,7 @@
 					},
 					"conf.test-vscode-71295": {
 						"type": "string",
-						"markdownDescription": "Click [here](command:workbench.view.extensions) to switch to Extensions view."
+						"markdownDescription": "Click [here](command:workbench.view.extensions) to switch to Extensions view, or [here](command:workbench.action.openRawDefaultSettings 'Preferences: Open Default Settings (JSON)') to explore default settings."
 					}
 				}
 			}
