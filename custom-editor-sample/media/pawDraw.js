@@ -172,7 +172,28 @@
 				this.initialCtx.drawImage(img, 0, 0);
 				this.ready = true;
 			}
-			
+
+			this.strokes = strokes;
+			this._redraw();
+		}
+
+		/**
+		 * @param {Array<Stroke> | undefined} strokes 
+		 */
+		async resetUntitled(strokes = []) {
+			const size = 100;
+			this.initialCanvas.width = this.drawingCanvas.width = size;
+			this.initialCanvas.height = this.drawingCanvas.height = size;
+
+			this.initialCtx.save();
+			{
+				this.initialCtx.fillStyle = 'white';
+				this.initialCtx.fillRect(0, 0, size, size);
+			}
+			this.initialCtx.restore();
+
+			this.ready = true;
+
 			this.strokes = strokes;
 			this._redraw();
 		}
@@ -188,7 +209,7 @@
 			outCtx.drawImage(this.drawingCanvas, 0, 0);
 
 			const blob = await new Promise(resolve => {
-				outCanvas.toBlob(resolve, 'image/jpeg')
+				outCanvas.toBlob(resolve, 'image/png')
 			});
 
 			return new Uint8Array(await blob.arrayBuffer());
@@ -203,14 +224,19 @@
 		switch (type) {
 			case 'init':
 				{
-					// Load the initial image into the canvas.
-					const data = new Uint8Array(body.value.data);
-					await editor.reset(data);
-					return;
+					if (body.untitled) {
+						await editor.resetUntitled();
+						return;
+					} else {
+						// Load the initial image into the canvas.
+						const data = new Uint8Array(body.value.data);
+						await editor.reset(data);
+						return;
+					}
 				}
 			case 'update':
 				{
-					const data = body.content ? new Uint8Array(body.content.data) : undefined;;
+					const data = body.content ? new Uint8Array(body.content.data) : undefined;
 					const strokes = body.edits.map(edit => new Stroke(edit.color, edit.stroke));
 					await editor.reset(data, strokes)
 					return;
@@ -219,7 +245,7 @@
 				{
 					// Get the image data for the canvas and post it back to the extension.
 					editor.getImageData().then(data => {
-						vscode.postMessage({ type: 'response', requestId, body: data });
+						vscode.postMessage({ type: 'response', requestId, body: Array.from(data) });
 					});
 					return;
 				}
