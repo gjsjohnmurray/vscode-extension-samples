@@ -127,6 +127,17 @@ export function activate(context: vscode.ExtensionContext) {
 		selectTerminal();
 	}));
 
+	// ExtensionContext.environmentVariableCollection
+	context.subscriptions.push(vscode.commands.registerCommand('terminalTest.updateEnvironment', () => {
+		const collection = context.environmentVariableCollection;
+		collection.replace('FOO', 'BAR');
+		collection.append('PATH', '/test/path');
+	}));
+
+	context.subscriptions.push(vscode.commands.registerCommand('terminalTest.clearEnvironment', () => {
+		context.environmentVariableCollection.clear();
+	}));
+
 	// vvv Proposed APIs below vvv
 
 	// vscode.window.onDidWriteTerminalData
@@ -145,15 +156,29 @@ export function activate(context: vscode.ExtensionContext) {
 		});
 	}));
 
-	context.subscriptions.push(vscode.commands.registerCommand('terminalTest.updateEnvironment', () => {
-		const collection = (context as any).environmentVariableCollection;
-		collection.replace('FOO', 'BAR');
-		collection.append('PATH', '/test/path');
-	}));
-
-	context.subscriptions.push(vscode.commands.registerCommand('terminalTest.clearEnvironment', () => {
-		const collection = (context as any).environmentVariableCollection;
-		collection.clear();
+	// vscode.window.registerTerminalLinkProvider
+	context.subscriptions.push(vscode.commands.registerCommand('terminalTest.registerTerminalLinkProvider', () => {
+		(<any>vscode.window).registerTerminalLinkProvider({
+			provideTerminalLinks: (context: any, token: vscode.CancellationToken) => {
+				// Detect the first instance of the word "link" if it exists and linkify it
+				const startIndex = (context.line as string).indexOf('link');
+				if (startIndex === -1) {
+					return [];
+				}
+				return [
+					{
+						startIndex,
+						length: 'link'.length,
+						tooltip: 'Show a notification',
+						// You can return data in this object to access inside handleTerminalLink
+						data: 'Example data'
+					}
+				];
+			},
+			handleTerminalLink: (link: any) => {
+				vscode.window.showInformationMessage(`Link activated (data = ${link.data})`);
+			}
+		});
 	}));
 }
 

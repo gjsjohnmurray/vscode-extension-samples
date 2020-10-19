@@ -20,6 +20,13 @@ const samples = [
     contributions: []
   },
   {
+    description: 'Webview View Sample',
+    path: 'webview-view-sample',
+    guide: null,
+    apis: ['window.registerWebviewViewProvider'],
+    contributions: []
+  },
+  {
     description: 'Status Bar Sample',
     path: 'statusbar-sample',
     guide: null,
