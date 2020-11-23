@@ -13,15 +13,18 @@ export class File implements vscode.FileStat {
     ctime: number;
     mtime: number;
     size: number;
+    readonly?: boolean;
 
     name: string;
     data?: Uint8Array;
 
     constructor(name: string) {
+        const isReadonly = name.split('.').pop() === 'txt';
         this.type = vscode.FileType.File;
         this.ctime = Date.now();
         this.mtime = Date.now();
         this.size = 0;
+        this.readonly = isReadonly;
         this.name = name;
     }
 }
