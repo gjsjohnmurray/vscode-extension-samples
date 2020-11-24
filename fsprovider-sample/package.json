@@ -4,6 +4,7 @@
 	"description": "Showcase for the file system provider API, also useful for testing again document that are not on disk.",
 	"version": "0.0.3",
 	"publisher": "vscode-samples",
+	"enableProposedApi": true,
 	"repository": {
 		"url": "https://github.com/Microsoft/vscode-extension-samples.git",
 		"type": "git"
