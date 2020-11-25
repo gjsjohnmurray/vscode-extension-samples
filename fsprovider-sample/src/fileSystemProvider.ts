@@ -154,6 +154,20 @@ export class MemFS implements vscode.FileSystemProvider {
         this._fireSoon({ type: vscode.FileChangeType.Changed, uri: dirname }, { type: vscode.FileChangeType.Created, uri });
     }
 
+    // --- for testing the readonly stat
+
+    toggleFileReadonlyState(uri: vscode.Uri): void {
+        const file = this._lookupAsFile(uri, false);
+        if (file) {
+            file.readonly = !file.readonly;
+
+            // will this trigger a stat call, spotting our changed readonly state and updating the editor accordingly?
+            this._fireSoon({ type: vscode.FileChangeType.Changed, uri });
+            return;
+        }
+        throw vscode.FileSystemError.FileNotFound();
+    }
+
     // --- lookup
 
     private _lookup(uri: vscode.Uri, silent: false): Entry;

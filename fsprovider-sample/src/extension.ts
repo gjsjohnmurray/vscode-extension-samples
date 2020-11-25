@@ -30,6 +30,12 @@ export function activate(context: vscode.ExtensionContext) {
         }
     }));
 
+    context.subscriptions.push(vscode.commands.registerCommand('memfs.toggleFileReadonlyState', (file) => {
+        if (initialized) {
+            memFs.toggleFileReadonlyState(file);
+        }
+    }));
+
     context.subscriptions.push(vscode.commands.registerCommand('memfs.init', _ => {
         if (initialized) {
             return;

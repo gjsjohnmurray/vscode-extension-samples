@@ -40,6 +40,12 @@
 				"category": "MemFS"
 			},
 			{
+				"command": "memfs.toggleFileReadonlyState",
+				"title": "Toggle Readonly",
+				"icon": "$(lock)",
+				"category": "MemFS"
+			},
+			{
 				"command": "memfs.deleteFile",
 				"title": "Delete \"file.txt\"",
 				"category": "MemFS"
@@ -69,8 +75,19 @@
 					"when": "workbenchState == workspace"
 				},
 				{
+					"command": "memfs.toggleFileReadonlyState",
+					"when": "false"
+				},
+				{
 					"command": "memfs.workspaceInit",
 					"when": "workbenchState != workspace"
+				}
+			],
+			"editor/title": [
+				{
+					"command": "memfs.toggleFileReadonlyState",
+					"group": "navigation@1",
+					"when": "resourceScheme == memfs"
 				}
 			]
 		}
