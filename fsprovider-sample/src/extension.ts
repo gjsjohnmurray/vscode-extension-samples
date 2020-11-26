@@ -3,13 +3,30 @@
 import * as vscode from 'vscode';
 import { MemFS } from './fileSystemProvider';
 
+let fspDisposable: vscode.Disposable;
+let fspReadonly: boolean = false;
+let rlfDisposable: vscode.Disposable;
+
 export function activate(context: vscode.ExtensionContext) {
 
     console.log('MemFS says "Hello"');
 
-    const memFs = new MemFS();
-    context.subscriptions.push(vscode.workspace.registerFileSystemProvider('memfs', memFs, { isCaseSensitive: true }));
     let initialized = false;
+    const memFs = new MemFS();
+
+    const registerMemFS = () => {
+        fspDisposable = vscode.workspace.registerFileSystemProvider('memfs', memFs, { isCaseSensitive: true, isReadonly: fspReadonly });
+    
+        rlfDisposable = vscode.workspace.registerResourceLabelFormatter({
+            scheme: 'memfs',
+            formatting: {
+              label: `${fspReadonly ? 'Readonly ' : ''}memfs:\${path}`,
+              separator: '/',
+            },
+          });
+    }
+
+    registerMemFS();
 
     context.subscriptions.push(vscode.commands.registerCommand('memfs.reset', _ => {
         for (const [name] of memFs.readDirectory(vscode.Uri.parse('memfs:/'))) {
@@ -30,9 +47,22 @@ export function activate(context: vscode.ExtensionContext) {
         }
     }));
 
-    context.subscriptions.push(vscode.commands.registerCommand('memfs.toggleFileReadonlyState', (file) => {
+    context.subscriptions.push(vscode.commands.registerCommand('memfs.toggleReadonly', () => {
+        fspReadonly = !fspReadonly;
+        fspDisposable.dispose();
+        rlfDisposable.dispose();
+        registerMemFS();
+    }));
+
+    context.subscriptions.push(vscode.commands.registerCommand('memfs.setFileReadonlyState', (file) => {
         if (initialized) {
-            memFs.toggleFileReadonlyState(file);
+            memFs.setFileReadonlyState(file, true);
+        }
+    }));
+
+    context.subscriptions.push(vscode.commands.registerCommand('memfs.clearFileReadonlyState', (file) => {
+        if (initialized) {
+            memFs.setFileReadonlyState(file, false);
         }
     }));
 
@@ -75,6 +105,28 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(vscode.commands.registerCommand('memfs.workspaceInit', _ => {
         vscode.workspace.updateWorkspaceFolders(0, 0, { uri: vscode.Uri.parse('memfs:/'), name: "MemFS - Sample" });
     }));
+
+    context.subscriptions.push(vscode.window.onDidChangeActiveTextEditor(async editor => {
+
+        // First remove our contextkey, so it doesn't hang around for non-MemFS documents
+        vscode.commands.executeCommand('setContext', 'memfsReadonlyFile', undefined);
+        
+        if (editor) {
+            const fileUri = editor.document.uri
+            if (fileUri.scheme === 'memfs') {
+                vscode.commands.executeCommand('setContext', 'memfsReadonlyFile', memFs.stat(fileUri).readonly);
+            }
+        }
+    }))
+}
+
+export function deactivate() {
+    if (fspDisposable) {
+        fspDisposable.dispose();
+    }
+    if (rlfDisposable) {
+        rlfDisposable.dispose();
+    }
 }
 
 function randomData(lineCnt: number, lineLen = 155): Buffer {

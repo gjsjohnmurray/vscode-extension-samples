@@ -40,9 +40,20 @@
 				"category": "MemFS"
 			},
 			{
-				"command": "memfs.toggleFileReadonlyState",
-				"title": "Toggle Readonly",
+				"command": "memfs.toggleReadonly",
+				"title": "Toggle Readonly State of Filesystem",
+				"category": "MemFS"
+			},
+			{
+				"command": "memfs.setFileReadonlyState",
+				"title": "Set File Readonly",
 				"icon": "$(lock)",
+				"category": "MemFS"
+			},
+			{
+				"command": "memfs.clearFileReadonlyState",
+				"title": "Clear File Readonly",
+				"icon": "$(unlock)",
 				"category": "MemFS"
 			},
 			{
@@ -75,7 +86,11 @@
 					"when": "workbenchState == workspace"
 				},
 				{
-					"command": "memfs.toggleFileReadonlyState",
+					"command": "memfs.setFileReadonlyState",
+					"when": "false"
+				},
+				{
+					"command": "memfs.clearFileReadonlyState",
 					"when": "false"
 				},
 				{
@@ -85,9 +100,14 @@
 			],
 			"editor/title": [
 				{
-					"command": "memfs.toggleFileReadonlyState",
+					"command": "memfs.setFileReadonlyState",
 					"group": "navigation@1",
-					"when": "resourceScheme == memfs"
+					"when": "resourceScheme == memfs && !memfsReadonlyFile"
+				},
+				{
+					"command": "memfs.clearFileReadonlyState",
+					"group": "navigation@1",
+					"when": "resourceScheme == memfs && memfsReadonlyFile"
 				}
 			]
 		}
