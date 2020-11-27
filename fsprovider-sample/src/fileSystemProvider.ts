@@ -162,6 +162,9 @@ export class MemFS implements vscode.FileSystemProvider {
         const file = this._lookupAsFile(uri, false);
         if (file) {
             file.readonly = readonly;
+            if (vscode.window.activeTextEditor?.document.uri.toString() === uri.toString()) {
+                vscode.commands.executeCommand('setContext', 'memfsReadonlyFile', readonly);
+            }
 
             // will this trigger a stat call, spotting our changed readonly state and updating the editor accordingly?
             this._fireSoon({ type: vscode.FileChangeType.Changed, uri });
