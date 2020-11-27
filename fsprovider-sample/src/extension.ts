@@ -14,19 +14,19 @@ export function activate(context: vscode.ExtensionContext) {
     let initialized = false;
     const memFs = new MemFS();
 
-    const registerMemFS = () => {
+    const registerMemFS = (readonly: boolean) => {
         fspDisposable = vscode.workspace.registerFileSystemProvider('memfs', memFs, { isCaseSensitive: true, isReadonly: fspReadonly });
     
         rlfDisposable = vscode.workspace.registerResourceLabelFormatter({
             scheme: 'memfs',
             formatting: {
-              label: `${fspReadonly ? 'Readonly ' : ''}memfs:\${path}`,
+              label: `${readonly ? 'Readonly ' : ''}memfs:\${path}`,
               separator: '/',
             },
           });
     }
 
-    registerMemFS();
+    registerMemFS(fspReadonly);
 
     context.subscriptions.push(vscode.commands.registerCommand('memfs.reset', _ => {
         for (const [name] of memFs.readDirectory(vscode.Uri.parse('memfs:/'))) {
@@ -51,7 +51,7 @@ export function activate(context: vscode.ExtensionContext) {
         fspReadonly = !fspReadonly;
         fspDisposable.dispose();
         rlfDisposable.dispose();
-        registerMemFS();
+        registerMemFS(fspReadonly);
     }));
 
     context.subscriptions.push(vscode.commands.registerCommand('memfs.setFileReadonlyState', (file) => {
