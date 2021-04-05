@@ -34,7 +34,7 @@ export function activate({ subscriptions }: vscode.ExtensionContext) {
 function updateStatusBarItem(): void {
 	const n = getNumberOfSelectedLines(vscode.window.activeTextEditor);
 	if (n > 0) {
-		myStatusBarItem.text = `$(megaphone) ${n} line(s) selected`;
+		myStatusBarItem.text = `$(megaphone) ${n} line(s) selected $(debug-start) $(debug-pause) $(debug-stop) $(debug-disconnect) $(debug-restart) $(debug-step-over) $(debug-step-into) $(debug-step-out) $(debug-continue) $(debug-step-back)`;
 		myStatusBarItem.show();
 	} else {
 		myStatusBarItem.hide();
