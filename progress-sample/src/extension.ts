@@ -8,7 +8,7 @@ import { ExtensionContext, StatusBarAlignment, window, StatusBarItem, Selection,
 export function activate(context: ExtensionContext) {
 	context.subscriptions.push(commands.registerCommand('extension.startTask', () => {
 		window.withProgress({
-			location: ProgressLocation.Notification,
+			location: ProgressLocation.SourceControl,
 			title: "I am long running!",
 			cancellable: true
 		}, (progress, token) => {
