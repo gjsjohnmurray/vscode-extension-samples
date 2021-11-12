@@ -69,9 +69,10 @@ export class MemFS implements vscode.FileSystemProvider {
 
     // --- manage file contents
 
-    readFile(uri: vscode.Uri): Uint8Array {
+    async readFile(uri: vscode.Uri): Promise<Uint8Array> {
         const data = this._lookupAsFile(uri, false).data;
         if (data) {
+            await new Promise(resolve => setTimeout(resolve, 5000));
             return data;
         }
         throw vscode.FileSystemError.FileNotFound();
