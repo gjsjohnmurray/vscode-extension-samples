@@ -21,6 +21,8 @@ export function activate(context: vscode.ExtensionContext) {
 	));
 
 	let disposable = vscode.commands.registerCommand('vscode-authenticationprovider-sample.login', async () => {
+		await vscode.authentication.getSession(AzureDevOpsAuthenticationProvider.id, ['A', 'BC'], { createIfNone: false });
+		await vscode.authentication.getSession(AzureDevOpsAuthenticationProvider.id, ['AB', 'C'], { createIfNone: false });
 		// Get our PAT session.
 		const session = await vscode.authentication.getSession(AzureDevOpsAuthenticationProvider.id, [], { createIfNone: true });
 
