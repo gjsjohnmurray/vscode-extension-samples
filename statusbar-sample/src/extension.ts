@@ -10,11 +10,10 @@ let myStatusBarItem: vscode.StatusBarItem;
 export function activate({ subscriptions }: vscode.ExtensionContext) {
 
 	// register a command that is invoked when the status bar
-	// item is selected
-	const myCommandId = 'sample.showSelectionCount';
+	// item is clicked
+	const myCommandId = 'sample.updateItem';
 	subscriptions.push(vscode.commands.registerCommand(myCommandId, () => {
-		const n = getNumberOfSelectedLines(vscode.window.activeTextEditor);
-		vscode.window.showInformationMessage(`Yeah, ${n} line(s) selected... Keep going!`);
+		updateStatusBarItem();
 	}));
 
 	// create a new status bar item that we can now manage
@@ -22,29 +21,25 @@ export function activate({ subscriptions }: vscode.ExtensionContext) {
 	myStatusBarItem.command = myCommandId;
 	subscriptions.push(myStatusBarItem);
 
-	// register some listener that make sure the status bar 
-	// item always up-to-date
-	subscriptions.push(vscode.window.onDidChangeActiveTextEditor(updateStatusBarItem));
-	subscriptions.push(vscode.window.onDidChangeTextEditorSelection(updateStatusBarItem));
-
-	// update status bar item once at start
+	// update status bar item immediately from activate()
 	updateStatusBarItem();
 }
 
 function updateStatusBarItem(): void {
-	const n = getNumberOfSelectedLines(vscode.window.activeTextEditor);
-	if (n > 0) {
-		myStatusBarItem.text = `$(megaphone) ${n} line(s) selected`;
+	let shell;
+	let attempt;
+
+	// Try multiple times in case it's a timing issue.
+	// TODO add a small delay between attempts to see if it succeeds after a bit.
+	for (attempt = 1; attempt <= 10; attempt++) {
+		shell = vscode.env.shell;
+		if (shell !== '') break;
+	}
+	if (vscode.env.shell === '') {
+		myStatusBarItem.text = `vscode.env.shell is EMPTY after ${attempt - 1} tries - CLICK HERE to check again`;
 		myStatusBarItem.show();
 	} else {
-		myStatusBarItem.hide();
+		myStatusBarItem.text = `After ${attempt} tries shell is ${shell}`;
+		myStatusBarItem.show();
 	}
-}
-
-function getNumberOfSelectedLines(editor: vscode.TextEditor | undefined): number {
-	let lines = 0;
-	if (editor) {
-		lines = editor.selections.reduce((prev, curr) => prev + (curr.end.line - curr.start.line), 0);
-	}
-	return lines;
 }
