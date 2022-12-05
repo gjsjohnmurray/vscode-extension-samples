@@ -35,6 +35,7 @@ function updateStatusBarItem(): void {
 	const n = getNumberOfSelectedLines(vscode.window.activeTextEditor);
 	if (n > 0) {
 		myStatusBarItem.text = `$(megaphone) ${n} line(s) selected`;
+		myStatusBarItem.tooltip = new vscode.MarkdownString('Tooltip text that is `backtick-marked` to demonstrate issue `#167917`');
 		myStatusBarItem.show();
 	} else {
 		myStatusBarItem.hide();
