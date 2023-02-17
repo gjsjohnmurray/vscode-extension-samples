@@ -21,7 +21,12 @@ class NoteComment implements vscode.Comment {
 }
 
 export function activate(context: vscode.ExtensionContext) {
-	// A `CommentController` is able to provide comments for documents.
+	const icon = 'resources/GJS.png';
+	//const iconPath = vscode.Uri.file(context.asAbsolutePath(icon));
+	const iconPath = vscode.Uri.file(context.asAbsolutePath(icon)).with({ scheme: 'vscode-file' });
+	const author = { name: `Me (${iconPath})`, iconPath };
+
+// A `CommentController` is able to provide comments for documents.
 	const commentController = vscode.comments.createCommentController('comment-sample', 'Comment API Sample');
 	context.subscriptions.push(commentController);
 
@@ -46,6 +51,7 @@ export function activate(context: vscode.ExtensionContext) {
 		thread.contextValue = 'draft';
 		const newComment = new NoteComment(reply.text, vscode.CommentMode.Preview, { name: 'vscode' }, thread);
 		newComment.label = 'pending';
+		newComment.author = author;
 		thread.comments = [...thread.comments, newComment];
 	}));
 
@@ -139,6 +145,7 @@ export function activate(context: vscode.ExtensionContext) {
 			newComment.label = 'pending';
 		}
 
+		newComment.author = author;
 		thread.comments = [...thread.comments, newComment];
 	}
 }
