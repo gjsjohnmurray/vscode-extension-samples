@@ -3,7 +3,7 @@
 	"displayName": "Comment API Sample",
 	"description": "Comment API Sample",
 	"version": "0.0.1",
-	"publisher": "vscode-samples",
+	"publisher": "gjsjohnmurray",
 	"private": true,
 	"license": "MIT",
 	"repository": {
