@@ -24,11 +24,8 @@ export function activate(context: vscode.ExtensionContext) {
 	const iconPathJM = vscode.Uri.parse('https://avatars.githubusercontent.com/u/6726799?s=40&v=4');
 	
 	// Depends on https://github.com/microsoft/vscode/pull/174751
-	let iconPathGJS = vscode.Uri.joinPath(context.extensionUri, 'resources/GJS.png');
-	// When extension is running remote we have to change scheme and set authority
-	if (context.extension.extensionKind === vscode.ExtensionKind.Workspace) {
-		iconPathGJS = iconPathGJS.with({ scheme: 'vscode-remote', authority: vscode.env.remoteName });
-	}
+	const iconPathGJS = vscode.Uri.joinPath(context.extensionUri, 'resources/GJS.png');
+
 	const authors: vscode.CommentAuthorInformation[] = [
 		{ name: `Me (${iconPathJM})`, iconPath: iconPathJM },
 		{ name: `GJS (${iconPathGJS})`, iconPath: iconPathGJS },
