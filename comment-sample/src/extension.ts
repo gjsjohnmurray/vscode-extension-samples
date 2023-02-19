@@ -21,10 +21,18 @@ class NoteComment implements vscode.Comment {
 }
 
 export function activate(context: vscode.ExtensionContext) {
-	const icon = 'resources/GJS.png';
-	//const iconPath = vscode.Uri.file(context.asAbsolutePath(icon));
-	const iconPath = vscode.Uri.file(context.asAbsolutePath(icon)).with({ scheme: 'vscode-file' });
-	const author = { name: `Me (${iconPath})`, iconPath };
+	const iconPathJM = vscode.Uri.parse('https://avatars.githubusercontent.com/u/6726799?s=40&v=4');
+	
+	// Depends on https://github.com/microsoft/vscode/pull/174751
+	let iconPathGJS = vscode.Uri.joinPath(context.extensionUri, 'resources/GJS.png');
+	// When extension is running remote we have to change scheme and set authority
+	if (context.extension.extensionKind === vscode.ExtensionKind.Workspace) {
+		iconPathGJS = iconPathGJS.with({ scheme: 'vscode-remote', authority: vscode.env.remoteName });
+	}
+	const authors: vscode.CommentAuthorInformation[] = [
+		{ name: `Me (${iconPathJM})`, iconPath: iconPathJM },
+		{ name: `GJS (${iconPathGJS})`, iconPath: iconPathGJS },
+	];
 
 // A `CommentController` is able to provide comments for documents.
 	const commentController = vscode.comments.createCommentController('comment-sample', 'Comment API Sample');
@@ -51,7 +59,7 @@ export function activate(context: vscode.ExtensionContext) {
 		thread.contextValue = 'draft';
 		const newComment = new NoteComment(reply.text, vscode.CommentMode.Preview, { name: 'vscode' }, thread);
 		newComment.label = 'pending';
-		newComment.author = author;
+		newComment.author = authors[newComment.id % 2];
 		thread.comments = [...thread.comments, newComment];
 	}));
 
@@ -145,7 +153,7 @@ export function activate(context: vscode.ExtensionContext) {
 			newComment.label = 'pending';
 		}
 
-		newComment.author = author;
+		newComment.author = authors[newComment.id % 2];
 		thread.comments = [...thread.comments, newComment];
 	}
 }
