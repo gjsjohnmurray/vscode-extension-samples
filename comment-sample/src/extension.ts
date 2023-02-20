@@ -21,17 +21,17 @@ class NoteComment implements vscode.Comment {
 }
 
 export function activate(context: vscode.ExtensionContext) {
-	const iconPathJM = vscode.Uri.parse('https://avatars.githubusercontent.com/u/105309205?s=52&v=4');
+	const iconPathHttps = vscode.Uri.parse('https://avatars.githubusercontent.com/u/105309205?s=52&v=4');
 	
 	// Depends on https://github.com/microsoft/vscode/pull/174751
-	const iconPathGJS = vscode.Uri.joinPath(context.extensionUri, 'resources/GJS.png');
+	const iconPathFile = vscode.Uri.joinPath(context.extensionUri, 'resources/GJS.png');
 
 	const authors: vscode.CommentAuthorInformation[] = [
-		{ name: `Me (${iconPathJM})`, iconPath: iconPathJM },
-		{ name: `GJS (${iconPathGJS})`, iconPath: iconPathGJS },
+		{ name: `Bot (https icon) (${iconPathHttps})`, iconPath: iconPathHttps },
+		{ name: `GJS (file icon) (${iconPathFile})`, iconPath: iconPathFile },
 	];
 
-// A `CommentController` is able to provide comments for documents.
+	// A `CommentController` is able to provide comments for documents.
 	const commentController = vscode.comments.createCommentController('comment-sample', 'Comment API Sample');
 	context.subscriptions.push(commentController);
 
@@ -56,6 +56,7 @@ export function activate(context: vscode.ExtensionContext) {
 		thread.contextValue = 'draft';
 		const newComment = new NoteComment(reply.text, vscode.CommentMode.Preview, { name: 'vscode' }, thread);
 		newComment.label = 'pending';
+		// Alternate between authors
 		newComment.author = authors[newComment.id % 2];
 		thread.comments = [...thread.comments, newComment];
 	}));
@@ -150,6 +151,7 @@ export function activate(context: vscode.ExtensionContext) {
 			newComment.label = 'pending';
 		}
 
+		// Alternate between authors
 		newComment.author = authors[newComment.id % 2];
 		thread.comments = [...thread.comments, newComment];
 	}
