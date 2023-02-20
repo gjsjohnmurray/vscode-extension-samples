@@ -21,7 +21,7 @@ class NoteComment implements vscode.Comment {
 }
 
 export function activate(context: vscode.ExtensionContext) {
-	const iconPathJM = vscode.Uri.parse('https://avatars.githubusercontent.com/u/6726799?s=40&v=4');
+	const iconPathJM = vscode.Uri.parse('https://avatars.githubusercontent.com/u/105309205?s=52&v=4');
 	
 	// Depends on https://github.com/microsoft/vscode/pull/174751
 	const iconPathGJS = vscode.Uri.joinPath(context.extensionUri, 'resources/GJS.png');
