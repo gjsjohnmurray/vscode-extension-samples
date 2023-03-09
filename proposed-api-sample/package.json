@@ -1,5 +1,5 @@
 {
-	"enabledApiProposals": [],
+	"enabledApiProposals": ["interactive"],
 	"name": "proposed-api-sample",
 	"displayName": "proposed-api-sample",
 	"description": "Sample showing how to use Proposed API",
@@ -21,6 +21,14 @@
 			{
 				"command": "extension.helloWorld",
 				"title": "Hello World"
+			}
+		],
+		"interactiveSession": [
+			{
+				"id": "proposed-api-sample",
+				"label": "YJM",
+				"when": "true",
+				"icon": "$(zap)"
 			}
 		]
 	},
