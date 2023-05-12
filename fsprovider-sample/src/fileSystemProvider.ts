@@ -52,6 +52,31 @@ export class MemFS implements vscode.FileSystemProvider {
 
 	root = new Directory('');
 
+	constructor() {
+
+		// Create .vscode/settings.json without raising events (simulates it already existing on the filesystem)
+		// Equivalent of createDirectory(vscode.Uri.parse(`memfs:/.vscode/`))
+		const uri = vscode.Uri.parse(`memfs:/.vscode/`);
+		const basename = path.posix.basename(uri.path);
+		const dirname = uri.with({ path: path.posix.dirname(uri.path) });
+		const parent = this._lookupAsDirectory(dirname, false);
+		const entry = new Directory(basename);
+		parent.entries.set(entry.name, entry);
+		parent.mtime = Date.now();
+		parent.size += 1;
+
+		// Equivalent of writeFile(vscode.Uri.parse(`memfs:/.vscode/settings.json`), Buffer.from('{ "editor.fontSize": 24 }'), { create: true, overwrite: true });
+		const uri2 = vscode.Uri.parse(`memfs:/.vscode/settings.json`);
+		const content = Buffer.from('{ "editor.fontSize": 24 }');
+		const basename2 = path.posix.basename(uri2.path);
+		const parent2 = this._lookupParentDirectory(uri2);
+		const entry2 = new File(basename2);
+		parent2.entries.set(basename2, entry2);
+		entry2.mtime = Date.now();
+		entry2.size = content.byteLength;
+		entry2.data = content;
+	}
+
 	// --- manage file metadata
 
 	stat(uri: vscode.Uri): vscode.FileStat {
