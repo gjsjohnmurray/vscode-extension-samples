@@ -186,7 +186,8 @@ export function activate(context: vscode.ExtensionContext) {
 			return {
 				options: {
 					name: 'Terminal API',
-					shellPath: process.title || 'C:/Windows/System32/cmd.exe'
+					shellPath: process.title || 'C:/Windows/System32/cmd.exe',
+					iconPath: vscode.Uri.file(context.asAbsolutePath('images/fileIcon.svg'))
 				}
 			};
 		}
