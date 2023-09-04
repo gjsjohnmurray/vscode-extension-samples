@@ -27,6 +27,14 @@
 				"title": "Open JS Fiddle"
 			},
 			{
+				"command": "extension.source-control.groups",
+				"title": "Do something on selected group(s)",
+				"icon": {
+					"light": "resources/icons/light/check.svg",
+					"dark": "resources/icons/dark/check.svg"
+				}
+			},
+			{
 				"command": "extension.source-control.commit",
 				"title": "Commit local changes to JS Fiddle",
 				"icon": {
@@ -83,6 +91,24 @@
 				{
 					"command": "extension.source-control.browse",
 					"when": "scmProvider == jsfiddle"
+				}
+			],
+			"scm/resourceGroup/context": [
+				{
+					"command": "extension.source-control.groups",
+					"group": "inline",
+					"when": "scmProvider == jsfiddle"
+				},
+				{
+					"command": "extension.source-control.groups",
+					"group": "foo",
+					"when": "scmProvider == jsfiddle"
+				}
+			],
+			"commandPalette": [
+				{
+					"command": "extension.source-control.groups",
+					"when": "never"
 				}
 			]
 		}

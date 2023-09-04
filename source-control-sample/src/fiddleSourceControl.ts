@@ -10,6 +10,7 @@ export const CONFIGURATION_FILE = '.jsfiddle';
 export class FiddleSourceControl implements vscode.Disposable {
 	private jsFiddleScm: vscode.SourceControl;
 	private changedResources: vscode.SourceControlResourceGroup;
+	private changedResourcesCopy: vscode.SourceControlResourceGroup;
 	private fiddleRepository: FiddleRepository;
 	private latestFiddleVersion: number = Number.POSITIVE_INFINITY; // until actual value is established
 	private _onRepositoryChange = new vscode.EventEmitter<Fiddle>();
@@ -19,6 +20,7 @@ export class FiddleSourceControl implements vscode.Disposable {
 	constructor(context: vscode.ExtensionContext, private readonly workspaceFolder: vscode.WorkspaceFolder, fiddle: Fiddle, download: boolean) {
 		this.jsFiddleScm = vscode.scm.createSourceControl('jsfiddle', 'JSFiddle #' + fiddle.slug, workspaceFolder.uri);
 		this.changedResources = this.jsFiddleScm.createResourceGroup('workingTree', 'Changes');
+		this.changedResourcesCopy = this.jsFiddleScm.createResourceGroup('workingTreeCopy', 'Copy of Changes');
 		this.fiddleRepository = new FiddleRepository(workspaceFolder, fiddle.slug);
 		this.jsFiddleScm.quickDiffProvider = this.fiddleRepository;
 		this.jsFiddleScm.inputBox.placeholder = 'Message is ignored by JS Fiddle :-]';
@@ -207,6 +209,7 @@ export class FiddleSourceControl implements vscode.Disposable {
 	async updateChangedGroup(): Promise<void> {
 		// for simplicity we ignore which document was changed in this event and scan all of them
 		const changedResources: vscode.SourceControlResourceState[] = [];
+		const changedResourcesCopy: vscode.SourceControlResourceState[] = [];
 
 		const uris = this.fiddleRepository.provideSourceControlledResources();
 
@@ -228,11 +231,14 @@ export class FiddleSourceControl implements vscode.Disposable {
 
 			if (isDirty) {
 				const resourceState = this.toSourceControlResourceState(uri, wasDeleted);
+				const resourceStateCopy = this.toSourceControlResourceState(uri, wasDeleted);
 				changedResources.push(resourceState);
+				changedResourcesCopy.push(resourceState);
 			}
 		}
 
 		this.changedResources.resourceStates = changedResources;
+		this.changedResourcesCopy.resourceStates = changedResources;
 
 		// the number of modified resources needs to be assigned to the SourceControl.count filed to let VS Code show the number.
 		this.jsFiddleScm.count = this.changedResources.resourceStates.length;
