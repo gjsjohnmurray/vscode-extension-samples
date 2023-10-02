@@ -20,8 +20,19 @@
 		"workspaceContains:.jsfiddle"
 	],
 	"main": "./out/extension.js",
+	"enabledApiProposals": ["scmResourceGroupState"],
 	"contributes": {
 		"commands": [
+			{
+				"command": "extension.source-control.download",
+				"title": "Download",
+				"icon": "$(cloud-download)"
+			},
+			{
+				"command": "extension.source-control.upload",
+				"title": "Upload",
+				"icon": "$(cloud-upload)"
+			},
 			{
 				"command": "extension.source-control.open",
 				"title": "Open JS Fiddle"
@@ -64,6 +75,20 @@
 			}
 		],
 		"menus": {
+			"scm/resourceGroup/context": [
+				{
+					"command": "extension.source-control.download",
+					"group": "inline",
+					"when": "scmResourceGroup == testing && scmResourceGroupState == ''",
+					"Xwhen": "scmResourceGroup == testing && scmResourceGroupState == download"
+				},
+				{
+					"command": "extension.source-control.upload",
+					"group": "inline",
+					"when": "scmResourceGroup == testing && scmResourceGroupState == ''",
+					"Xwhen": "scmResourceGroup == testing && scmResourceGroupState == upload"
+				}
+			],
 			"scm/title": [
 				{
 					"command": "extension.source-control.commit",

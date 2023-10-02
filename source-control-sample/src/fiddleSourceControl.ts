@@ -10,6 +10,7 @@ export const CONFIGURATION_FILE = '.jsfiddle';
 export class FiddleSourceControl implements vscode.Disposable {
 	private jsFiddleScm: vscode.SourceControl;
 	private changedResources: vscode.SourceControlResourceGroup;
+	private dummyGroup: vscode.SourceControlResourceGroup;
 	private fiddleRepository: FiddleRepository;
 	private latestFiddleVersion: number = Number.POSITIVE_INFINITY; // until actual value is established
 	private _onRepositoryChange = new vscode.EventEmitter<Fiddle>();
@@ -19,6 +20,8 @@ export class FiddleSourceControl implements vscode.Disposable {
 	constructor(context: vscode.ExtensionContext, private readonly workspaceFolder: vscode.WorkspaceFolder, fiddle: Fiddle, download: boolean) {
 		this.jsFiddleScm = vscode.scm.createSourceControl('jsfiddle', 'JSFiddle #' + fiddle.slug, workspaceFolder.uri);
 		this.changedResources = this.jsFiddleScm.createResourceGroup('workingTree', 'Changes');
+		this.dummyGroup = this.jsFiddleScm.createResourceGroup('testing', 'Testing #192009');
+		this.dummyGroup.contextValue = 'download';
 		this.fiddleRepository = new FiddleRepository(workspaceFolder, fiddle.slug);
 		this.jsFiddleScm.quickDiffProvider = this.fiddleRepository;
 		this.jsFiddleScm.inputBox.placeholder = 'Message is ignored by JS Fiddle :-]';
