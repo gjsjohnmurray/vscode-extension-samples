@@ -61,10 +61,20 @@
 			{
 				"command": "extension.source-control.browse",
 				"title": "Open current Fiddle in the default browser"
+			},
+			{
+				"command": "extension.source-control.zap",
+				"title": "Zap",
+				"icon": "$(zap)"
 			}
 		],
 		"menus": {
 			"scm/title": [
+				{
+					"command": "extension.source-control.zap",
+					"group": "navigation",
+					"when": "scmProvider == jsfiddle"
+				},
 				{
 					"command": "extension.source-control.commit",
 					"group": "navigation",

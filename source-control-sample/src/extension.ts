@@ -61,6 +61,11 @@ export async function activate(context: vscode.ExtensionContext) {
 			const sourceControl = await pickSourceControl(sourceControlPane);
 			if (sourceControl) { sourceControl.openInBrowser(); }
 		}));
+	context.subscriptions.push(vscode.commands.registerCommand("extension.source-control.zap",
+		(sourceControlPane: vscode.SourceControl) => {
+			const message = sourceControlPane ? `gives me access to ${sourceControlPane.label}` : '<undefined>';
+			vscode.window.showInformationMessage(`Zap argument ${message}.`, { modal: true });
+		}));
 
 
 	context.subscriptions.push(vscode.workspace.onDidChangeWorkspaceFolders(e => {
