@@ -11,6 +11,8 @@ export function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(vscode.workspace.registerFileSystemProvider('memfs', memFs, { isCaseSensitive: true }));
 	let initialized = false;
 
+	const scm = vscode.scm.createSourceControl('memfs', 'memfs label', vscode.Uri.parse('memfs:/'));
+
 	context.subscriptions.push(vscode.commands.registerCommand('memfs.reset', _ => {
 		for (const [name] of memFs.readDirectory(vscode.Uri.parse('memfs:/'))) {
 			memFs.delete(vscode.Uri.parse(`memfs:/${name}`));
