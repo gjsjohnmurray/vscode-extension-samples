@@ -39,7 +39,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(vscode.commands.registerCommand("extension.source-control.refresh",
 		async (sourceControlPane: vscode.SourceControl) => {
 			const sourceControl = await pickSourceControl(sourceControlPane);
-			if (sourceControl) { sourceControl.refresh(); }
+			if (sourceControl) { sourceControl.refresh(sourceControlPane); }
 		}));
 	context.subscriptions.push(vscode.commands.registerCommand("extension.source-control.discard",
 		async (sourceControlPane: vscode.SourceControl) => {

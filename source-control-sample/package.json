@@ -78,7 +78,7 @@
 				{
 					"command": "extension.source-control.refresh",
 					"group": "navigation",
-					"when": "scmProvider == jsfiddle"
+					"when": "false"
 				},
 				{
 					"command": "extension.source-control.browse",

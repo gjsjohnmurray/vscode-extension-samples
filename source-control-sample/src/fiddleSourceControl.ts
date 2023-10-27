@@ -15,13 +15,15 @@ export class FiddleSourceControl implements vscode.Disposable {
 	private _onRepositoryChange = new vscode.EventEmitter<Fiddle>();
 	private timeout?: NodeJS.Timer;
 	private fiddle!: Fiddle;
+	private instance: number;
 
-	constructor(context: vscode.ExtensionContext, private readonly workspaceFolder: vscode.WorkspaceFolder, fiddle: Fiddle, download: boolean) {
-		this.jsFiddleScm = vscode.scm.createSourceControl('jsfiddle', 'JSFiddle #' + fiddle.slug, workspaceFolder.uri);
+	constructor(context: vscode.ExtensionContext, private readonly workspaceFolder: vscode.WorkspaceFolder, fiddle: Fiddle, download: boolean, instance = 1) {
+		this.jsFiddleScm = vscode.scm.createSourceControl('jsfiddle' + (instance > 1 ? instance.toString() : ''), `#${instance} JSFiddle #${fiddle.slug}`, workspaceFolder.uri);
 		this.changedResources = this.jsFiddleScm.createResourceGroup('workingTree', 'Changes');
 		this.fiddleRepository = new FiddleRepository(workspaceFolder, fiddle.slug);
 		this.jsFiddleScm.quickDiffProvider = this.fiddleRepository;
-		this.jsFiddleScm.inputBox.placeholder = 'Message is ignored by JS Fiddle :-]';
+		this.jsFiddleScm.inputBox.placeholder = `Instance #${instance}`;
+		this.instance = instance;
 
 		const fileSystemWatcher = vscode.workspace.createFileSystemWatcher(new vscode.RelativePattern(workspaceFolder, "*.*"));
 		fileSystemWatcher.onDidChange(uri => this.onResourceChange(uri), context.subscriptions);
@@ -37,7 +39,7 @@ export class FiddleSourceControl implements vscode.Disposable {
 		if (this.fiddle.version === undefined || Number.isNaN(this.fiddle.version)) {
 			this.establishVersion();
 		} else {
-			this.refresh();
+			this.refresh(this.jsFiddleScm);
 		}
 	}
 
@@ -54,7 +56,11 @@ export class FiddleSourceControl implements vscode.Disposable {
 	private static async fromFiddle(fiddleSlug: string, fiddleVersion: number, workspaceFolder: vscode.WorkspaceFolder, context: vscode.ExtensionContext, overwrite: boolean): Promise<FiddleSourceControl> {
 		const fiddle = await downloadFiddle(fiddleSlug, fiddleVersion);
 		const workspacePath = workspaceFolder.uri.fsPath;
-		return new FiddleSourceControl(context, workspaceFolder, fiddle, overwrite);
+
+		const first = new FiddleSourceControl(context, workspaceFolder, fiddle, overwrite, 1);
+		const second = new FiddleSourceControl(context, workspaceFolder, fiddle, overwrite, 2);
+
+		return first;
 	}
 
 	private refreshStatusBar() {
@@ -275,20 +281,33 @@ export class FiddleSourceControl implements vscode.Disposable {
 	 * Refresh is used when the information on the server may have changed.
 	 * For example another user updates the Fiddle online.
 	 */
-	async refresh(): Promise<void> {
-		let latestVersion = this.fiddle.version || 0;
-		while (true) {
-			try {
-				const latestFiddle = await downloadFiddle(this.fiddle.slug, latestVersion);
-				this.latestFiddleVersion = latestVersion;
-				latestVersion++;
-			} catch (ex) {
-				// typically the ex.statusCode == 404, when there is no further version
-				break;
-			}
-		}
+	async refresh(sourceControl: vscode.SourceControl): Promise<void> {
+		return vscode.window.withProgress({ location: vscode.ProgressLocation.SourceControl }, async (progress) => {
+			const seconds = 4 * this.instance;
+			sourceControl.inputBox.placeholder = `I will take ${seconds} seconds to refresh`;
+			return new Promise<void>((resolve, reject) => {
 
-		this.refreshStatusBar();
+				setTimeout(async () => {
+					
+					let latestVersion = this.fiddle.version || 0;
+					while (true) {
+						try {
+							const latestFiddle = await downloadFiddle(this.fiddle.slug, latestVersion);
+							this.latestFiddleVersion = latestVersion;
+							latestVersion++;
+						} catch (ex) {
+							// typically the ex.statusCode == 404, when there is no further version
+							break;
+						}
+					}
+					
+					this.refreshStatusBar();
+					sourceControl.count = seconds;
+					sourceControl.inputBox.placeholder = `Refreshed - count set to ${seconds}`;
+					resolve();
+				}, seconds * 1000);
+			});
+		});
 	}
 
 	/**
