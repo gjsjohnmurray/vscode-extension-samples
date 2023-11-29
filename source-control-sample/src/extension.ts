@@ -63,7 +63,7 @@ export async function activate(context: vscode.ExtensionContext) {
 		}));
 	context.subscriptions.push(vscode.commands.registerCommand("extension.source-control.groups",
 		async (...resourceGroups: vscode.SourceControlResourceGroup[]) => {
-			const groupLabelList = resourceGroups.map((group) => { return group.label}).join();
+			const groupLabelList = resourceGroups.map((group) => { return group.label;}).join();
 			vscode.window.showInformationMessage(`Group Label(s): ${groupLabelList}`);
 		}));
 
