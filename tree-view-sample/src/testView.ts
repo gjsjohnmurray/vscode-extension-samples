@@ -12,9 +12,13 @@ export class TestView {
 			}
 		});
 		vscode.commands.registerCommand('testView.changeTitle', async () => {
-			const title = await vscode.window.showInputBox({ prompt: 'Type the new title for the Test View', placeHolder: view.title });
+			const title = await vscode.window.showInputBox({ prompt: 'Type the new title for the Test View. Leave empty for default.', placeHolder: view.title });
 			if (title) {
 				view.title = title;
+				view.badge = { value: title.length, tooltip: `Title set for Test View is ${title.length} characters long` };
+			} else {
+				view.title = 'Test View';
+				view.badge = undefined;
 			}
 		});
 	}
