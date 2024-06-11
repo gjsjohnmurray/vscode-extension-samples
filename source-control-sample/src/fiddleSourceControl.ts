@@ -64,6 +64,21 @@ export class FiddleSourceControl implements vscode.Disposable {
 				"arguments": [this],
 				"title": `↕ ${this.fiddle.slug} #${this.fiddle.version} / ${this.latestFiddleVersion}`,
 				"tooltip": "Checkout another version of this fiddle.",
+			},
+			{
+				command: "workbench.action.showAboutDialog",
+				title: "$(info) scmStatusBarCommand #2",
+				tooltip: "Second command contributed via SourceContol.statusBarCommands",
+			},
+			{
+				command: "workbench.action.showAboutDialog",
+				title: "$(heart-filled) scmStatusBarCommand #3",
+				tooltip: "Third command contributed via SourceContol.statusBarCommands",
+			},
+			{
+				command: "workbench.action.showAboutDialog",
+				title: "$(rocket) scmStatusBarCommand #4",
+				tooltip: "Fourth command contributed via SourceContol.statusBarCommands",
 			}
 		];
 	}
