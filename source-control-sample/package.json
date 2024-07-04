@@ -79,14 +79,12 @@
 				{
 					"command": "extension.source-control.download",
 					"group": "inline",
-					"when": "scmResourceGroup == testing && scmResourceGroupState == ''",
-					"Xwhen": "scmResourceGroup == testing && scmResourceGroupState == download"
+					"when": "scmResourceGroup == testing && scmResourceGroupState == download"
 				},
 				{
 					"command": "extension.source-control.upload",
 					"group": "inline",
-					"when": "scmResourceGroup == testing && scmResourceGroupState == ''",
-					"Xwhen": "scmResourceGroup == testing && scmResourceGroupState == upload"
+					"when": "scmResourceGroup == testing && scmResourceGroupState == upload"
 				}
 			],
 			"scm/title": [
