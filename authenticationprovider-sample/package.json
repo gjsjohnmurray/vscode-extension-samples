@@ -10,12 +10,29 @@
     "Other"
   ],
   "activationEvents": [],
+  "enabledApiProposals": ["secretStorageKeys"],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
         "command": "vscode-authenticationprovider-sample.login",
-        "title": "Login with Azure DevOps"
+        "title": "Login with Azure DevOps",
+        "category": "AuthenticationProvider Sample"
+      },
+      {
+        "command": "vscode-authenticationprovider-sample.addSecret",
+        "title": "Add a Secret Keyed by Timestamp",
+        "category": "AuthenticationProvider Sample"
+      },
+      {
+        "command": "vscode-authenticationprovider-sample.showKeys",
+        "title": "Show the Keys of Our Secrets",
+        "category": "AuthenticationProvider Sample"
+      },
+      {
+        "command": "vscode-authenticationprovider-sample.deleteAllSecrets",
+        "title": "Delete All Our Secrets",
+        "category": "AuthenticationProvider Sample"
       }
     ],
     "authentication": [

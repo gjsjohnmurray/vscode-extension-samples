@@ -18,7 +18,7 @@ export function activate(context: vscode.ExtensionContext) {
 		new AzureDevOpsAuthenticationProvider(context.secrets),
 	));
 
-	const disposable = vscode.commands.registerCommand('vscode-authenticationprovider-sample.login', async () => {
+	let disposable = vscode.commands.registerCommand('vscode-authenticationprovider-sample.login', async () => {
 		// Get our PAT session.
 		const session = await vscode.authentication.getSession(AzureDevOpsAuthenticationProvider.id, [], { createIfNone: true });
 
@@ -41,6 +41,40 @@ export function activate(context: vscode.ExtensionContext) {
 				vscode.window.showErrorMessage('Failed to get profile. You need to use a PAT that has access to all organizations. Please sign out and try again.');
 			}
 			throw e;
+		}
+	});
+
+	context.subscriptions.push(disposable);
+
+	disposable = vscode.commands.registerCommand('vscode-authenticationprovider-sample.addSecret', async () => {
+		const now = new Date();
+		context.secrets.store(now.toISOString(), now.toTimeString());
+	});
+
+	context.subscriptions.push(disposable);
+
+	disposable = vscode.commands.registerCommand('vscode-authenticationprovider-sample.showKeys', async () => {
+		// Get the keys of our secrets.
+		const keys = await context.secrets.keys();
+		if (!keys || keys.length === 0) {
+			vscode.window.showInformationMessage('No secrets found.');
+		} else {
+			vscode.window.showInformationMessage(`Found ${keys.length} key(s) under which ${context.extension.id} is storing secret(s): ${keys.join(', ')}`);
+		}
+	});
+
+	context.subscriptions.push(disposable);
+
+	disposable = vscode.commands.registerCommand('vscode-authenticationprovider-sample.deleteAllSecrets', async () => {
+		// Get the keys of our secrets.
+		const keys = await context.secrets.keys();
+		if (!keys || keys.length === 0) {
+			vscode.window.showInformationMessage('No secrets found.');
+		} else {
+			keys.forEach((key) => {
+				context.secrets.delete(key);
+			})
+			vscode.window.showInformationMessage(`Deleted all ${keys.length} secret(s) previously stored by  ${context.extension.id}`);
 		}
 	});
 
