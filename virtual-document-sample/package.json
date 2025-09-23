@@ -25,7 +25,8 @@
 		"commands": [
 			{
 				"command": "cowsay.say",
-				"title": "cowsay"
+				"title": "cowsay",
+				"icon": "$(symbol-class)"
 			},
 			{
 				"command": "cowsay.backwards",
@@ -36,6 +37,11 @@
 			"editor/title": [
 				{
 					"command": "cowsay.backwards",
+					"group": "navigation",
+					"when": "resourceScheme == cowsay"
+				},
+				{
+					"command": "cowsay.say",
 					"group": "navigation",
 					"when": "resourceScheme == cowsay"
 				}
